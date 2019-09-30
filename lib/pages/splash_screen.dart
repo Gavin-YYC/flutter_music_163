@@ -28,11 +28,9 @@ class _SplashSreen extends State<SplashSreen> {
 
   Timer adTimer;
 
-  int adDuration = 6;
+  bool hasAd = true;
 
   int LogoDuration = 2;
-
-  bool hasAd = true;
 
   void initState() {
     super.initState();
@@ -41,6 +39,7 @@ class _SplashSreen extends State<SplashSreen> {
   }
 
   void changeWidgetStatus() {
+    var adDur = Constant.adDuration;
     // 先展示自家LOGO
     new Timer(Duration(seconds: LogoDuration), () {
       setState(() => status = hasAd ? WidgetStatus.AD : WidgetStatus.HOME);
@@ -48,11 +47,11 @@ class _SplashSreen extends State<SplashSreen> {
       // 广告倒计时
       if (hasAd) {
         adTimer = new Timer.periodic(Duration(seconds: 1), (timer) {
-          if (adDuration < 1) {
+          if (adDur < 1) {
             cancelAdTimer();
             return;
           }
-          adDuration--;
+          adDur--;
         });
       }
     });
@@ -60,8 +59,17 @@ class _SplashSreen extends State<SplashSreen> {
 
   // 取消广告
   void cancelAdTimer() {
-    setState(() => status = WidgetStatus.HOME);
+//    setState(() => status = WidgetStatus.HOME);
     adTimer?.cancel();
+  }
+
+  // 点击广告
+  // 根据不同类型执行不同行为
+  //  - H5 - 打开webview
+  //  - app - 打开app
+  //  - page - 进去某个页面
+  void onAdTap() {
+    print('广告点击');
   }
 
   Widget build(BuildContext context) {
@@ -91,22 +99,23 @@ class _SplashSreen extends State<SplashSreen> {
                     margin: EdgeInsets.only(
                       top: size.height * 0.2624
                     ),
-                    child: Text('音乐的力量', style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 30.0
-                    )),
+                    child: Image(
+                      fit: BoxFit.cover,
+                      image: AssetImage(Constant.imageDir + 'slogin.png')
+                    ),
                   ),
                 ),
                 Align(
                   alignment: Alignment.bottomCenter,
                   child: Container(
+                    height: 18.0,
                     margin: EdgeInsets.only(
                         bottom: size.height * 0.0291
                     ),
-                    child: Text('网易云音乐', style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20.0
-                    )),
+                    child: Image(
+                      fit: BoxFit.fitHeight,
+                      image: AssetImage(Constant.imageDir + 'logo.png')
+                    ),
                   ),
                 ),
               ],
@@ -127,9 +136,20 @@ class _SplashSreen extends State<SplashSreen> {
                   left: 0,
                   width: adLayout['adW'],
                   height: adLayout['adH'],
-                  child: Container(
-                    color: adLayout['adBg'],
-                    child: Text('广告内容'),
+                  child: GestureDetector(
+                    onTap: () => onAdTap(),
+                    child: Container(
+                      color: adLayout['adBg'],
+                      child: Container(
+                        color: Utils.color(Constant.splashBg),
+                        child: Image(
+                          fit: BoxFit.cover,
+                          image: AssetImage(
+                            Constant.imageDir + 'ad.jpeg',
+                          )
+                        ),
+                      ),
+                    ),
                   ),
                 ),
 
@@ -180,14 +200,32 @@ class _SplashSreen extends State<SplashSreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Padding(
-                          padding: EdgeInsets.only(bottom: 10.0),
-                          child: Text('网易云音乐', style: TextStyle(
-                              fontSize: 20.0
-                          )),
+                          padding: EdgeInsets.only(bottom: 10.0, top: 5.0),
+                          child: Image(
+                            height: 20.0,
+                            fit: BoxFit.fitHeight,
+                            image: AssetImage(Constant.imageDir + 'logo_revert.png')
+                          ),
                         ),
-                        Text('网易公司版权所有 @2019', style: TextStyle(
-                          fontSize: 16.0,
-                        ))
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Container(
+                              width: 15.0,
+                              height: 0.5,
+                              color: Colors.grey,
+                            ),
+                            Text(' 网易公司版权所有 ©2019 ', style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 10.0,
+                            )),
+                            Container(
+                              width: 15.0,
+                              height: 0.5,
+                              color: Colors.grey,
+                            ),
+                          ],
+                        )
                       ],
                     ),
                   ),
