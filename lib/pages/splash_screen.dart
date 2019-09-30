@@ -59,7 +59,7 @@ class _SplashSreen extends State<SplashSreen> {
 
   // 取消广告
   void cancelAdTimer() {
-//    setState(() => status = WidgetStatus.HOME);
+    setState(() => status = WidgetStatus.HOME);
     adTimer?.cancel();
   }
 
